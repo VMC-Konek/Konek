@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KONEK • One Tap Connection</title>
+  <meta name="description" content="KONEK Digital Card • One tap to connect." />
+  <style>
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1022;
+      --card:#0E1633cc;
+      --line:#1F2A52;
+      --text:#EAF0FF;
+      --muted:#A7B2D6;
+      --brand:#FF7A18;
+      --brand2:#3D9CE9;
+      --good:#2FE6A6;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1000px 700px at 20% 10%, rgba(61,156,233,.18), transparent 60%),
+        radial-gradient(900px 650px at 80% 25%, rgba(255,122,24,.16), transparent 55%),
+        radial-gradient(700px 600px at 50% 90%, rgba(47,230,166,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{
+      min-height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px 16px 42px;
+    }
+    .container{
+      width:min(420px, 100%);
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:14px;
+      gap:10px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .logo{
+      width:40px; height:40px;
+      border-radius:14px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.16), transparent 55%),
+        linear-gradient(135deg, rgba(255,122,24,1), rgba(61,156,233,1));
+      box-shadow: 0 10px 28px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-30%;
+      background: radial-gradient(circle at 20% 20%, rgba(255,255,255,.35), transparent 50%);
+      transform:rotate(20deg);
+    }
+    .brand h1{
+      font-size:16px;
+      letter-spacing:.22em;
+      margin:0;
+      text-transform:uppercase;
+      font-weight:800;
+    }
+    .brand small{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.08em;
+      margin-top:2px;
+    }
+    .pill{
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      font-size:12px;
+      color:var(--muted);
+      backdrop-filter: blur(10px);
+      white-space:nowrap;
+    }
+
+    .card{
+      border-radius: var(--radius);
+      border:1px solid rgba(31,42,82,.85);
+      background:
+        radial-gradient(900px 400px at 15% 0%, rgba(255,122,24,.12), transparent 55%),
+        radial-gradient(900px 420px at 90% 10%, rgba(61,156,233,.12), transparent 60%),
+        rgba(14,22,51,.72);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      backdrop-filter: blur(16px);
+    }
+    .glowline{
+      height:3px;
+      background: linear-gradient(90deg, transparent, rgba(255,122,24,.85), rgba(61,156,233,.85), transparent);
+      opacity:.9;
+    }
+    .inner{padding:18px 18px 16px}
+    .profile{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    .avatar{
+      width:64px; height:64px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.14), transparent 55%),
+        linear-gradient(135deg, rgba(255,122,24,.85), rgba(61,156,233,.85));
+      box-shadow: 0 14px 30px rgba(0,0,0,.35);
+      overflow:hidden;
+      flex:0 0 auto;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      letter-spacing:.06em;
+    }
+    .avatar img{
+      width:100%; height:100%; object-fit:cover; display:block;
+    }
+    .who h2{
+      margin:0;
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:.01em;
+      line-height:1.1;
+    }
+    .who p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+    .badge{
+      font-size:11px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+    .badge strong{color:var(--text)}
+    .divider{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+      margin:14px 0;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+    }
+    .btn{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      border-radius:14px;
+      padding:12px 10px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      font-weight:700;
+      font-size:13px;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.20); background:rgba(255,255,255,.06)}
+    .btn:active{transform: translateY(0px) scale(.99)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(255,122,24,.92), rgba(61,156,233,.92));
+      border-color: rgba(255,255,255,.14);
+      box-shadow: 0 12px 28px rgba(0,0,0,.30);
+    }
+    .btn.primary:hover{background: linear-gradient(135deg, rgba(255,122,24,1), rgba(61,156,233,1))}
+    .btn svg{width:16px; height:16px; flex:0 0 auto}
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin:16px 0 10px;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+    }
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      transition: border-color .12s ease, transform .12s ease, background .12s ease;
+    }
+    .item:hover{border-color: rgba(255,255,255,.20); background:rgba(255,255,255,.05); transform: translateY(-1px)}
+    .left{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      min-width:0;
+    }
+    .icon{
+      width:36px; height:36px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+    }
+    .icon svg{width:18px; height:18px}
+    .meta{
+      min-width:0;
+    }
+    .meta b{
+      display:block;
+      font-size:13px;
+      letter-spacing:.01em;
+      margin-bottom:2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .meta span{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .arrow{
+      opacity:.7;
+      flex:0 0 auto;
+    }
+
+    .footer{
+      padding:14px 18px 16px;
+      color:var(--muted);
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-top:1px solid rgba(255,255,255,.06);
+      background:rgba(0,0,0,.10);
+    }
+    .tiny{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      white-space:nowrap;
+    }
+    .dot{
+      width:7px;height:7px;border-radius:999px;
+      background: var(--good);
+      box-shadow: 0 0 0 4px rgba(47,230,166,.10);
+    }
+    .mutedlink{
+      color:var(--muted);
+      border-bottom:1px dashed rgba(167,178,214,.35);
+    }
+
+    /* Optional: reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      .btn, .item{transition:none}
+      .btn:hover, .item:hover{transform:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="container">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <h1>KONEK</h1>
+            <small>One Tap • Connection</small>
+          </div>
+        </div>
+        <div class="pill">Tap-ready Digital Card</div>
+      </div>
+
+      <div class="card">
+        <div class="glowline"></div>
+
+        <div class="inner">
+          <!-- PROFILE -->
+          <div class="profile">
+            <!-- Replace with your image: <img src="profile.jpg" alt="Profile"> -->
+            <div class="avatar" id="avatar">
+              <span id="avatarText">VM</span>
+            </div>
+
+            <div class="who">
+              <h2 id="fullName">Vision Media Corporation</h2>
+              <p id="titleLine">Multimedia • Livestream • Photo/Video • Creative Production</p>
+
+              <div class="badges">
+                <div class="badge"><strong>Brand:</strong> KONEK</div>
+                <div class="badge"><strong>City:</strong> Philippines</div>
+                <div class="badge"><strong>Mode:</strong> NFC + QR</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- QUICK ACTIONS -->
+          <div class="grid">
+            <a class="btn primary" id="btnSave" href="#" onclick="downloadVCard(); return false;">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3v10m0 0l4-4m-4 4L8 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 14v4a3 3 0 003 3h8a3 3 0 003-3v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Save
+            </a>
+            <a class="btn" id="btnCall" href="tel:+639001234567">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 4h4l2 5-3 2c1.5 3 3.5 5 6.5 6.5l2-3 5 2v4c0 1-1 2-2 2C10 23 1 14 1 6c0-1 1-2 2-2h2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+              Call
+            </a>
+            <a class="btn" id="btnEmail" href="mailto:hello@visionmediacorp.ph">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="2" />
+                <path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Email
+            </a>
+          </div>
+
+          <!-- SOCIALS -->
+          <div class="section-title">
+            <span>Social</span><span>Tap to open</span>
+          </div>
+          <div class="list">
+            <a class="item" href="https://facebook.com/" target="_blank" rel="noopener" data-track="facebook">
+              <div class="left">
+                <div class="icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M14 8h3V5h-3c-2 0-4 2-4 4v3H7v3h3v7h3v-7h3l1-3h-4V9c0-.6.4-1 1-1z" fill="currentColor" opacity=".9"/>
+                  </svg>
+                </div>
+                <div class="meta">
+                  <b>Facebook</b>
+                  <span id="fbLabel">facebook.com/yourpage</span>
+                </div>
+              </div>
+              <div class="arrow" aria-hidden="true">›</div>
+            </a>
+
+            <a class="item" href="https://instagram.com/" target="_blank" rel="noopener" data-track="instagram">
+              <div class="left">
+                <div class="icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4z" stroke="currentColor" stroke-width="2" opacity=".9"/>
+                    <path d="M12 17a5 5 0 100-10 5 5 0 000 10z" stroke="currentColor" stroke-width="2" opacity=".9"/>
+                    <path d="M17.5 6.5h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="meta">
+                  <b>Instagram</b>
+                  <span id="igLabel">@yourhandle</span>
+                </div>
+              </div>
+              <div class="arrow" aria-hidden="true">›</div>
+            </a>
+
+            <a class="item" href="https://tiktok.com/" target="_blank" rel="noopener" data-track="tiktok">
+              <div class="left">
+                <div class="icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M14 3v11.2a4.8 4.8 0 11-4-4.7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+                    <path d="M14 3c1 3 3.5 5 7 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+                  </svg>
+                </div>
+                <div class="meta">
+                  <b>TikTok</b>
+                  <span id="ttLabel">@yourhandle</span>
+                </div>
+              </div>
+              <div class="arrow" aria-hidden="true">›</div>
+            </a>
+          </div>
+
+          <!-- CONTACT + INFO -->
+          <div class="section-title" style="margin-top:18px;">
+            <span>Info</span><span>Quick actions</span>
+          </div>
+          <div class="list">
+            <a class="item" href="https://maps.google.com/?q=Taguig%2C%20Philippines" target="_blank" rel="noopener" data-track="maps">
+              <div class="left">
+                <div class="icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 22s7-5.3 7-12a7 7 0 10-14 0c0 6.7 7 12 7 12z" stroke="currentColor" stroke-width="2" opacity=".9"/>
+                    <path d="M12 13a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="2" opacity=".9"/>
+                  </svg>
+                </div>
+                <div class="meta">
+                  <b>Location</b>
+                  <span id="locLabel">Taguig, Philippines</span>
+                </div>
+              </div>
+              <div class="arrow" aria-hidden="true">›</div>
+            </a>
+
+            <a class="item" href="https://yourwebsite.com" target="_blank" rel="noopener" data-track="website">
+              <div class="left">
+                <div class="icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" stroke="currentColor" stroke-width="2" opacity=".9"/>
+                    <path d="M2 12h20" stroke="currentColor" stroke-width="2" opacity=".9"/>
+                    <path d="M12 2c3 3 3 17 0 20" stroke="currentColor" stroke-width="2" opacity=".9"/>
+                  </svg>
+                </div>
+                <div class="meta">
+                  <b>Website / Portfolio</b>
+                  <span id="webLabel">yourwebsite.com</span>
+                </div>
+              </div>
+              <div class="arrow" aria-hidden="true">›</div>
+            </a>
+
+            <a class="item" href="sms:+639001234567" data-track="sms">
+              <div class="left">
+                <div class="icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M21 15a4 4 0 01-4 4H8l-5 3V7a4 4 0 014-4h10a4 4 0 014 4v8z" stroke="currentColor" stroke-width="2" opacity=".9"/>
+                  </svg>
+                </div>
+                <div class="meta">
+                  <b>Text / SMS</b>
+                  <span id="smsLabel">+63 900 123 4567</span>
+                </div>
+              </div>
+              <div class="arrow" aria-hidden="true">›</div>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer">
+          <div class="tiny">
+            <span class="dot" aria-hidden="true"></span>
+            <span>Live profile • editable anytime</span>
+          </div>
+          <a class="mutedlink" href="#" onclick="copyLink(); return false;">Copy link</a>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; text-align:center; color:var(--muted); font-size:12px;">
+        Powered by <span style="color:var(--text); font-weight:800; letter-spacing:.06em;">KONEK</span> • One Tap Connection
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== EDIT THESE DETAILS (YOUR INFO) ======
+    const profile = {
+      fullName: "Vision Media Corporation",
+      titleLine: "Multimedia • Livestream • Photo/Video • Creative Production",
+      initials: "VM",
+      phoneE164: "+639001234567",
+      phonePretty: "+63 900 123 4567",
+      email: "hello@visionmediacorp.ph",
+      website: "https://yourwebsite.com",
+      locationLabel: "Taguig, Philippines",
+      mapsUrl: "https://maps.google.com/?q=Taguig%2C%20Philippines",
+      facebookUrl: "https://facebook.com/yourpage",
+      facebookLabel: "facebook.com/yourpage",
+      instagramUrl: "https://instagram.com/yourhandle",
+      instagramLabel: "@yourhandle",
+      tiktokUrl: "https://tiktok.com/@yourhandle",
+      tiktokLabel: "@yourhandle"
+    };
+
+    // Apply to UI
+    document.getElementById("fullName").textContent = profile.fullName;
+    document.getElementById("titleLine").textContent = profile.titleLine;
+
+    // Avatar initials
+    document.getElementById("avatarText").textContent = profile.initials;
+
+    // Quick buttons
+    document.getElementById("btnCall").href = "tel:" + profile.phoneE164;
+    document.getElementById("btnEmail").href = "mailto:" + profile.email;
+
+    // Labels
+    document.getElementById("smsLabel").textContent = profile.phonePretty;
+    document.querySelector('[data-track="sms"]').href = "sms:" + profile.phoneE164;
+
+    document.getElementById("locLabel").textContent = profile.locationLabel;
+    document.querySelector('[data-track="maps"]').href = profile.mapsUrl;
+
+    document.getElementById("webLabel").textContent = profile.website.replace(/^https?:\/\//,'');
+    document.querySelector('[data-track="website"]').href = profile.website;
+
+    document.getElementById("fbLabel").textContent = profile.facebookLabel;
+    document.querySelector('[data-track="facebook"]').href = profile.facebookUrl;
+
+    document.getElementById("igLabel").textContent = profile.instagramLabel;
+    document.querySelector('[data-track="instagram"]').href = profile.instagramUrl;
+
+    document.getElementById("ttLabel").textContent = profile.tiktokLabel;
+    document.querySelector('[data-track="tiktok"]').href = profile.tiktokUrl;
+
+    // ====== vCard Download (.vcf) ======
+    function downloadVCard(){
+      const vcf = [
+        "BEGIN:VCARD",
+        "VERSION:3.0",
+        `FN:${escapeVCF(profile.fullName)}`,
+        `ORG:${escapeVCF("KONEK")}`,
+        `TITLE:${escapeVCF(profile.titleLine)}`,
+        `TEL;TYPE=CELL:${profile.phoneE164}`,
+        `EMAIL;TYPE=INTERNET:${profile.email}`,
+        `URL:${profile.website}`,
+        `ADR;TYPE=WORK:;;${escapeVCF(profile.locationLabel)};;;;`,
+        "END:VCARD"
+      ].join("\n");
+
+      const blob = new Blob([vcf], { type: "text/vcard;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = (profile.fullName || "konek-contact") + ".vcf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeVCF(str){
+      return String(str || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/\n/g, "\\n")
+        .replace(/;/g, "\\;")
+        .replace(/,/g, "\\,");
+    }
+
+    // ====== Copy link ======
+    async function copyLink(){
+      try{
+        await navigator.clipboard.writeText(window.location.href);
+        toast("Link copied!");
+      }catch(e){
+        toast("Copy failed. Long-press the URL in your browser.");
+      }
+    }
+
+    // ====== Lightweight Tap Analytics (local only) ======
+    // For true analytics, you’ll later connect this to your backend (Firebase/Supabase/etc.)
+    document.querySelectorAll("[data-track]").forEach(el=>{
+      el.addEventListener("click", ()=>{
+        const key = "konek_clicks_" + el.getAttribute("data-track");
+        const current = Number(localStorage.getItem(key) || "0");
+        localStorage.setItem(key, String(current + 1));
+      });
+    });
+
+    // ====== Minimal Toast ======
+    let toastTimer;
+    function toast(msg){
+      clearTimeout(toastTimer);
+      let t = document.getElementById("toast");
+      if(!t){
+        t = document.createElement("div");
+        t.id = "toast";
+        t.style.position = "fixed";
+        t.style.left = "50%";
+        t.style.bottom = "22px";
+        t.style.transform = "translateX(-50%)";
+        t.style.padding = "10px 14px";
+        t.style.borderRadius = "999px";
+        t.style.border = "1px solid rgba(255,255,255,.14)";
+        t.style.background = "rgba(14,22,51,.85)";
+        t.style.color = "var(--text)";
+        t.style.boxShadow = "0 12px 30px rgba(0,0,0,.35)";
+        t.style.backdropFilter = "blur(10px)";
+        t.style.fontSize = "13px";
+        t.style.zIndex = "9999";
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.opacity = "1";
+      toastTimer = setTimeout(()=>{ t.style.opacity="0"; }, 1600);
+    }
+  </script>
+</body>
+</html>
