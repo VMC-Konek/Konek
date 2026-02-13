@@ -56,28 +56,29 @@
       align-items:center;
       gap:10px;
     }
- .logo{
-  width:60px;
-  height:60px;
-  border-radius:0px;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:none;
-  box-shadow:none;
-}
-
-.logo img{
-  width:120%;
-  height:120%;
-  object-fit:contain;
-}
+    .logo{
+      width:60px;
+      height:60px;
+      border-radius:0px;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:none;
+      box-shadow:none;
+      position:relative; /* keeps your :after safe */
+    }
+    .logo img{
+      width:120%;
+      height:120%;
+      object-fit:contain;
+    }
     .logo:after{
       content:"";
       position:absolute; inset:-30%;
       background: radial-gradient(circle at 20% 20%, rgba(255,255,255,.35), transparent 50%);
       transform:rotate(20deg);
+      pointer-events:none;
     }
     .brand h1{
       font-size:16px;
@@ -198,6 +199,7 @@
       font-size:13px;
       transition: transform .12s ease, border-color .12s ease, background .12s ease;
       user-select:none;
+      text-align:center;
     }
     .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.20); background:rgba(255,255,255,.06)}
     .btn:active{transform: translateY(0px) scale(.99)}
@@ -304,7 +306,50 @@
       border-bottom:1px dashed rgba(167,178,214,.35);
     }
 
-    /* Optional: reduce motion */
+    /* PAY MODAL */
+    #payModal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.6);
+      z-index:99999;
+      padding:18px;
+    }
+    #payModal .modalCard{
+      max-width:420px;
+      margin:8vh auto 0;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(14,22,51,.92);
+      backdrop-filter:blur(16px);
+      box-shadow:0 18px 60px rgba(0,0,0,.45);
+      overflow:hidden;
+    }
+    #payModal .modalHead{
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    #payModal .modalBody{
+      padding:16px;
+    }
+    #payModal .qrBox{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      padding:12px;
+      display:flex;
+      justify-content:center;
+    }
+    #payModal img{
+      width:260px;
+      max-width:100%;
+      height:auto;
+      border-radius:12px;
+    }
+
     @media (prefers-reduced-motion: reduce){
       .btn, .item{transition:none}
       .btn:hover, .item:hover{transform:none}
@@ -317,8 +362,8 @@
       <div class="topbar">
         <div class="brand">
           <div class="logo">
-  <img src="konek white.png" alt="KONEK Logo">
-</div>
+            <img src="konek white.png" alt="KONEK Logo">
+          </div>
           <div>
             <h1>KONEK</h1>
             <small>One Tap • Connection</small>
@@ -333,10 +378,9 @@
         <div class="inner">
           <!-- PROFILE -->
           <div class="profile">
-            <!-- Replace with your image: <img src="profile.jpg" alt="Profile"> -->
-      <div class="avatar">
-  <img src="transparentwhite vmc.png" alt="Vision Media Logo">
-</div>
+            <div class="avatar">
+              <img src="transparentwhite vmc.png" alt="Vision Media Logo">
+            </div>
 
             <div class="who">
               <h2 id="fullName">Vision Media Corporation</h2>
@@ -374,6 +418,15 @@
               </svg>
               Email
             </a>
+          </div>
+
+          <!-- PAY ME -->
+          <div class="section-title" style="margin-top:18px;">
+            <span>Pay Me</span><span>Choose wallet</span>
+          </div>
+          <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
+            <a class="btn" href="#pay-gcash" onclick="openPayModal('gcash'); return false;">GCash</a>
+            <a class="btn" href="#pay-maya" onclick="openPayModal('maya'); return false;">Maya</a>
           </div>
 
           <!-- SOCIALS -->
@@ -500,6 +553,34 @@
     </div>
   </div>
 
+  <!-- PAY MODAL -->
+  <div id="payModal">
+    <div class="modalCard">
+      <div class="modalHead">
+        <div style="font-weight:800;" id="payTitle">Pay</div>
+        <a href="#" class="mutedlink" onclick="closePayModal(); return false;">Close</a>
+      </div>
+      <div class="modalBody">
+        <div style="color:var(--muted); font-size:13px; margin-bottom:10px;">
+          Scan this QR using the selected app.
+        </div>
+
+        <div class="qrBox">
+          <img id="payQr" src="" alt="Payment QR">
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <a class="btn primary" href="#" onclick="tryOpenWallet(); return false;" style="flex:1;">Open App</a>
+          <a class="btn" href="#" onclick="downloadQr(); return false;" style="flex:1;">Save QR</a>
+        </div>
+
+        <div style="color:var(--muted); font-size:12px; margin-top:10px; line-height:1.4;">
+          If the app doesn’t open automatically, open GCash/Maya → Scan/Pay QR → then scan this QR.
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ====== EDIT THESE DETAILS (YOUR INFO) ======
     const profile = {
@@ -523,9 +604,6 @@
     // Apply to UI
     document.getElementById("fullName").textContent = profile.fullName;
     document.getElementById("titleLine").textContent = profile.titleLine;
-
-    // Avatar initials
-    //document.getElementById("avatarText").textContent = profile.initials;
 
     // Quick buttons
     document.getElementById("btnCall").href = "tel:" + profile.phoneE164;
@@ -595,13 +673,65 @@
     }
 
     // ====== Lightweight Tap Analytics (local only) ======
-    // For true analytics, you’ll later connect this to your backend (Firebase/Supabase/etc.)
     document.querySelectorAll("[data-track]").forEach(el=>{
       el.addEventListener("click", ()=>{
         const key = "konek_clicks_" + el.getAttribute("data-track");
         const current = Number(localStorage.getItem(key) || "0");
         localStorage.setItem(key, String(current + 1));
       });
+    });
+
+    // ====== PAY ME (GCash/Maya) ======
+    // Upload these files to your GitHub repo (same folder as index.html):
+    // - gcash-qr.png
+    // - maya-qr.png
+    let currentWallet = null;
+
+    function openPayModal(wallet){
+      currentWallet = wallet;
+
+      const title = document.getElementById("payTitle");
+      const qr = document.getElementById("payQr");
+      const modal = document.getElementById("payModal");
+
+      if(wallet === "gcash"){
+        title.textContent = "Pay via GCash";
+        qr.src = "gcash-qr.png";
+      } else {
+        title.textContent = "Pay via Maya";
+        qr.src = "maya-qr.png";
+      }
+
+      modal.style.display = "block";
+    }
+
+    function closePayModal(){
+      document.getElementById("payModal").style.display = "none";
+    }
+
+    function tryOpenWallet(){
+      // Best-effort only: deep links can be blocked by wallets/browsers.
+      if(currentWallet === "gcash"){
+        window.location.href = "gcash://";
+      } else if(currentWallet === "maya"){
+        window.location.href = "maya://";
+      }
+      toast("If the app didn’t open, just scan the QR.");
+    }
+
+    function downloadQr(){
+      const img = document.getElementById("payQr");
+      const a = document.createElement("a");
+      a.href = img.src;
+      a.download = (currentWallet || "pay") + "-qr.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    // Close modal when tapping outside the card
+    document.getElementById("payModal").addEventListener("click", (e)=>{
+      if(e.target && e.target.id === "payModal") closePayModal();
     });
 
     // ====== Minimal Toast ======
